@@ -86,7 +86,7 @@ jobs:
           mkdir outapk
           
           $ZIPALIGN -v -p 4 \
-            play-services-core/build/outputs/apk/hmsDefault/release/*.apk \
+            play-services-core/build/outputs/apk/mapboxDefault/release/*.apk \
             outapk/GmsCore-aligned.apk
 
           $ZIPALIGN -v -p 4 \
