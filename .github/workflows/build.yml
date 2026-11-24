@@ -58,12 +58,7 @@ jobs:
           done
           
       - name: "Execute Gradle assemble"
-        env:
-          MAPBOX_VECTOR_TILES_KEY: ${{ secrets.MAPBOX_KEY }}
-        run: |
-          # An empty key makes the Mapbox renderer abort natively at runtime
-          [ -n "$MAPBOX_VECTOR_TILES_KEY" ] || { echo "::error::MAPBOX_KEY secret is missing"; exit 1; }
-          ./gradlew assemble${{ matrix.target }}
+        run: "./gradlew assemble${{ matrix.target }}"
         
       - name: "Execute Gradle lint"
         run: "./gradlew lint${{ matrix.target }}"
@@ -91,7 +86,7 @@ jobs:
           mkdir outapk
           
           $ZIPALIGN -v -p 4 \
-            play-services-core/build/outputs/apk/mapboxDefault/release/*.apk \
+            play-services-core/build/outputs/apk/vtmDefault/release/*.apk \
             outapk/GmsCore-aligned.apk
 
           $ZIPALIGN -v -p 4 \
