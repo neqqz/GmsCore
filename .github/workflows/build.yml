@@ -58,7 +58,13 @@ jobs:
           done
           
       - name: "Execute Gradle assemble"
-        run: "./gradlew assemble${{ matrix.target }}"
+        env:
+          LOCAL_PROPERTIES: ${{ secrets.LOCAL_PROPERTIES }}
+        run: |
+          printf '%s\n' "$LOCAL_PROPERTIES" | tr -d '\r' > local.properties
+          # An empty key makes the Mapbox renderer abort natively at runtime
+          grep -q '^mapbox\.key=.\+' local.properties || { echo "::error::mapbox.key is missing in LOCAL_PROPERTIES secret"; exit 1; }
+          ./gradlew assemble${{ matrix.target }}
         
       - name: "Execute Gradle lint"
         run: "./gradlew lint${{ matrix.target }}"
@@ -86,7 +92,7 @@ jobs:
           mkdir outapk
           
           $ZIPALIGN -v -p 4 \
-            play-services-core/build/outputs/apk/hmsDefault/release/*.apk \
+            play-services-core/build/outputs/apk/mapboxDefault/release/*.apk \
             outapk/GmsCore-aligned.apk
 
           $ZIPALIGN -v -p 4 \
