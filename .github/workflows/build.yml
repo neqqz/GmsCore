@@ -59,10 +59,11 @@ jobs:
           
       - name: "Execute Gradle assemble"
         env:
-          MAPBOX_VECTOR_TILES_KEY: ${{ secrets.MAPBOX_KEY }}
+          LOCAL_PROPERTIES: ${{ secrets.LOCAL_PROPERTIES }}
         run: |
+          printf '%s\n' "$LOCAL_PROPERTIES" | tr -d '\r' > local.properties
           # An empty key makes the Mapbox renderer abort natively at runtime
-          [ -n "$MAPBOX_VECTOR_TILES_KEY" ] || { echo "::error::MAPBOX_KEY secret is missing"; exit 1; }
+          grep -q '^mapbox\.key=.\+' local.properties || { echo "::error::mapbox.key is missing in LOCAL_PROPERTIES secret"; exit 1; }
           ./gradlew assemble${{ matrix.target }}
         
       - name: "Execute Gradle lint"
